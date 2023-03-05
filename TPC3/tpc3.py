@@ -111,30 +111,26 @@ def frequenciaTiposDoRelacion(dic):
 
 def passToJSON(dic):
     contador = 0
-    with open("tpc3/tpc3.json", "w") as fp:
-        for line in dic:
-            import json
-            if(contador>=20):
-                break
-            i = 1
-            persoas = {}
-            for persoa in line["persoas"]:
-                persoas[f"persoa{i}"] = persoa
-                i+=1
-            lineParsed = {
-                    "processos" : line["processos"],
-                    "fecha" : line["fecha"],
-                    "persoas" : persoas,
-                    "relation" : line["relation"]
-            }
-            # Serializing json
-            json_object = json.dumps(lineParsed, indent=4)
-            print(json_object)
-            if(contador == 0):
-                z = json.loads(json_object)
-            else:
-                z.update(json_object)
-            contador+=1
-    fp.write(z)
-    fp.close()                
+    lista = []
+    for line in dic:
+        import json
+        if(contador>=20):
+            break
+        i = 1
+        persoas = {}
+        for persoa in line["persoas"]:
+            persoas[f"persoa{i}"] = persoa
+            i+=1
+        lineParsed = {
+                "processos" : line["processos"],
+                "fecha" : line["fecha"],
+                "persoas" : persoas,
+                "relation" : line["relation"]
+        }
+        lista.append(lineParsed)
+    jsonString = json.dumps(lista, indent=4, separators=(',', ': '), sort_keys=True)
+    jsonFile = open("tpc3/tpc3.json", "w")
+    jsonFile.write(jsonString)
+
+    jsonFile.close()              
 passToJSON(openFile("tpc3/processos.txt"))
