@@ -97,8 +97,8 @@ def printTabla(dictionary):
     print(my_table)
 
 print("-------------Sex-------------")
-printTabla(distributionBySex(openFile("myheart.csv")))
+printTabla(distributionBySex(openFile("tpc1/myheart.csv")))
 print("-------------Age-------------")
-printTabla(distributionByAge(openFile("myheart.csv")))
+printTabla(distributionByAge(openFile("tpc1/myheart.csv")))
 print("-----------Colesterol-----------")
-printTabla(distributionByColesterol((openFile("myheart.csv"))))
+printTabla(distributionByColesterol((openFile("tpc1/myheart.csv"))))
