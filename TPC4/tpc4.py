@@ -9,7 +9,10 @@ def CSVtoJSON(csvfilename):
         line = line.replace('\n','')
         data = line.split(",")
         if(first):
-            campos = ["Número","Nome","Curso","Notas{3,5}::media"]
+
+            matches = re.finditer(r'([aA-zZ])(\w)+([a-z]|((\{\d,\d\}|\{\d\})(::[a-z]+)?))',line)
+            for campo in matches:
+                campos.append(campo.group())
             first = False
         else:
             contador = 0
@@ -48,11 +51,11 @@ def CSVtoJSON(csvfilename):
                     else:
                         if(operation == ""):
                             print({campoName:lista})
-                            parejas.append({campoName:lista})
+                            parejas[campoName]=lista
                         elif operation == "sum":
-                            parejas[campoName]=sum(lista)
+                            parejas[campoName+"_sum"]=sum(lista)
                         elif operation == "media":
-                            parejas[campoName]=(sum(lista)/len(lista))
+                            parejas[campoName+"_mean"]=(sum(lista)/len(lista))
 
                             
             listaData.append(parejas)

@@ -2,19 +2,19 @@
     {
         "Curso": "Teatro",
         "Nome": "CÃ¢ndido FaÃ­sca",
-        "Notas": 13.0,
-        "Número": "3162"
+        "Notas_sum": 39,
+        "Numero": "3162"
     },
     {
         "Curso": "Desporto",
         "Nome": "Cristiano Ronaldo",
-        "Notas": 14.4,
-        "Número": "7777"
+        "Notas_sum": 49,
+        "Numero": "7777"
     },
     {
         "Curso": "CiÃªncia PolÃ­tica",
         "Nome": "Marcelo Sousa",
-        "Notas": 19.0,
-        "Número": "264"
+        "Notas_sum": 56,
+        "Numero": "264"
     }
 ]
