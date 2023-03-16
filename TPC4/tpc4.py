@@ -9,7 +9,6 @@ def CSVtoJSON(csvfilename):
         line = line.replace('\n','')
         data = line.split(",")
         if(first):
-
             matches = re.finditer(r'([aA-zZ])(\w)+([a-z]|((\{\d,\d\}|\{\d\})(::[a-z]+)?))',line)
             for campo in matches:
                 campos.append(campo.group())
