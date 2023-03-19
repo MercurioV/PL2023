@@ -4,10 +4,11 @@ import math
 euros = 0
 cents = 0
 validMoedas = ['5c','10c','20c','50c','1e','2e']
+levantar = False
 def llamar(cantidad):
     global euros
     global cents
-    dif = (euros+cents/100)-cantidad
+    dif = math.ceil(100 * ((euros+cents/100)-cantidad))/100
     if(dif>=0):
         result = math.modf(dif)
         euros = int(result[1])
@@ -46,12 +47,36 @@ def devolverCents(cents):
     else:
         return False,contador50,contador20,contador10
 
+def proccessDevolution(euros,cents):
+    msg = f"maq: ¨troco={euros}e{cents}c; Volte sempre!¨ ou maq:  ¨troco="
+    euro,contador2s = devolverEuros(euros)
+    if(contador2s>0):
+        msg+=f" {contador2s}x2e,"
+    if(euro):
+        msg+=f" 1x1e,"
+    cinco,contador50,contador20,contador10 = devolverCents(cents)
+    if(contador50>0):
+        msg+=f" {contador50}x50c,"
+    if(contador20>0):
+        msg+=f" {contador20}x20c,"
+    if(contador10>0):
+        msg+=f" {contador10}x10c,"
+    if(cinco):
+        msg+=f" 1x5c,"
+    msg = msg[:-1]
+    msg+="; Volte sempre!¨"
+    print(msg)
+    sys.exit()
+
+
 def process(line):
     global euros
     global cents
+    global levantar
     if "LEVANTAR" in line:
         print("maq: ¨Introduza moedas.¨")
-    elif "MOEDA" in line:
+        levantar = True
+    elif "MOEDA" in line and levantar:
         listaMoedas = re.sub(r'(MOEDA |\.)','',line).rstrip()
         listaMoedas = re.split(r"\W+",listaMoedas)
         errorMessage = ""
@@ -67,26 +92,9 @@ def process(line):
             print(errorMessage[:-1]+f"; saldo = {euros}e{cents}c")
         else:
             print(f"saldo = {euros}e{cents}c")
-    elif "POUSAR" in line:
-        msg = f"maq: ¨troco={euros}e{cents}c; Volte sempre!¨ ou maq:  ¨troco="
-        euro,contador2s = devolverEuros(euros)
-        if(contador2s>0):
-            msg+=f" {contador2s}x2e,"
-        if(euro):
-            msg+=f" 1x1e,"
-        cinco,contador50,contador20,contador10 = devolverCents(cents)
-        if(contador50>0):
-            msg+=f" {contador50}x50c,"
-        if(contador20>0):
-            msg+=f" {contador20}x20c,"
-        if(contador10>0):
-            msg+=f" {contador10}x10c,"
-        if(cinco):
-            msg+=f" 1x5c,"
-        msg = msg[:-1]
-        msg+="; Volte sempre!¨"
-        print(msg) 
-    elif "T=" in line:
+    elif "POUSAR" in line and levantar:
+        proccessDevolution(euros,cents) 
+    elif "T=" in line and levantar:
         tlf = re.sub(r'T=','',line).rstrip()
         if(re.search(r'^(601|641)',tlf) and len(tlf)==9):
             print("maq: ¨Esse número não é permitido neste telefone. Queira discar novo número!¨")
@@ -98,8 +106,10 @@ def process(line):
             print(f"maq: ¨saldo = {euros}e{cents}c¨")
         elif(re.search(r'^808',tlf) and len(tlf)==9):
             llamar(0.1)
-    elif "ABORTAR" in line:
-        sys.exit()
+    elif "ABORTAR" in line and levantar:
+       proccessDevolution(euros,cents)
+    else:
+        print("First pick up the phone or enter a valid operation")
 
 for line in sys.stdin:
     process(line)
