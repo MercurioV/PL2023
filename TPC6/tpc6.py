@@ -4,6 +4,8 @@ states = (
     ("assigment", "exclusive"),
     ("program", "exclusive"),
     ("condition", "exclusive"),
+    ("function", "exclusive"),
+    ("parameter", "exclusive")
 )
 
 tokens = (
@@ -14,6 +16,8 @@ tokens = (
     'PUNTOCOMA',
     'FUNCTION',
     'FUNCTIONNAME',
+    'FUNCTIONCALL',
+    'PARENTHESIS',
     'ASSIGMENT',
     'VALUE',
     'CONDITIONAL',
@@ -33,7 +37,8 @@ tokens = (
     'COMA',
     'ARRAY_TYPE_VARIABLE',
     'ARRAY',
-    'ARRAY_ELEMENT_VALUE'
+    'ARRAY_ELEMENT_VALUE',
+    'ENDPARENTHESIS'
 )
 def t_ignore_LINECOMMENT(t):
     r'//(.)*(\n)?'
@@ -43,6 +48,26 @@ def t_ignore_MULTILINECOMMENT(t):
 
 def t_FUNCTION(t):
     r'function'
+    t.lexer.begin('function')
+    return t
+
+def t_function_PARENTHESIS(t):
+    r'\('
+    t.lexer.begin('parameter')
+    return t
+def t_parameter_ENDPARENTHESIS(t):
+    r'\)'
+    t.lexer.begin('INITIAL')
+    return t
+def t_parameter_PARAMETER(t):
+    r'\w+(\(.+\))*'
+    return t
+
+def t_parameter_COMA(t):
+    r'\,'
+    return t
+def t_function_FUNCTIONNAME(t):
+    r'\w+'
     return t
 
 def t_FOR(t):
@@ -116,7 +141,7 @@ def t_assigment_DIVISION(t):
     r'\/'
     return t
 
-def t_ANY_FUNCTIONNAME(t):
+def t_FUNCTIONCALL(t):
     r'([aA-zZ]+)\(.+\)'
     return t
 
@@ -133,7 +158,7 @@ def t_ANY_PUNTOCOMA(t):
     t.lexer.begin('INITIAL')
     return t
 
-def t_ANY_COMA(t):
+def t_assigment_INITIAL_COMA(t):
     r'\,'
     t.lexer.begin('INITIAL')
     return t
@@ -157,22 +182,27 @@ lexer = lex.lex()
 lexer.variables = list()
 
 lexer.input("""
-/* max.p: calcula o maior inteiro duma lista desordenada
+/* factorial.p
 -- 2023-03-20 
 -- by jcr
 */
 
-int i = 10, a[10] = {1,2,3,4,5,6,7,8,9,10};
+int i;
+
+// Função que calcula o factorial dum número n
+function fact(n){
+  int res = 1;
+  while res > 1 {
+    res = res * n;
+    res = res - 1;
+  }
+}
 
 // Programa principal
-program myMax{
-  int max = a[0];
-  for i in [1..9]{
-    if max < a[i] {
-      max = a[i];
-    }
+program myFact{
+  for i in [1..10]{
+    print(i, fact(i));
   }
-  print(max);
 }
 """)
 
